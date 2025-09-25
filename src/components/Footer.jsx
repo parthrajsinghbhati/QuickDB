@@ -3,7 +3,7 @@ import { Database } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="border-t py-12 bg-background">
+    <footer className="border-t py-6 bg-background mt-auto">
       <div className="container">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center space-x-2 mb-4 md:mb-0">

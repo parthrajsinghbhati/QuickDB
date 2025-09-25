@@ -1,6 +1,6 @@
 import React from "react";
 
-const App = () => {
+const Auth = () => {
 
     // state for login or register
     const [state, setState] = React.useState("login");
@@ -25,6 +25,7 @@ const App = () => {
     };
 
     return (
+        <div className="flex items-center justify-center min-h-[80vh]">
         <form
             onSubmit={handleSubmit}
             className="w-full sm:w-[350px] text-center border border-zinc-300/60 dark:border-zinc-700 rounded-2xl px-8 bg-white dark:bg-zinc-900"
@@ -84,7 +85,8 @@ const App = () => {
                 </button>
             </p>
         </form>
+        </div>
     );
 };
 
-export default App;
+export default Auth;

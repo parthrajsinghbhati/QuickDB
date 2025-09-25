@@ -1,7 +1,9 @@
 import heroImage from "../assets/hero-image.jpg";
 import FeaturesSection from "../components/FeaturesSection";
+import { useNavigate } from "react-router";
 
 export default function LandingPage() {
+  const navigate = useNavigate();
   return (
     <main className="px-6 py-16 text-center">
       <h1 className="text-6xl font-extrabold tracking-tight bg-gradient-to-r from-violet-400 via-violet-500 to-violet-300 bg-clip-text text-transparent">
@@ -15,7 +17,10 @@ export default function LandingPage() {
         applications. No backend knowledge required.
       </p>
       <div className="mt-10 flex items-center justify-center gap-4">
-        <button className="rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-5 py-3 text-white shadow transition-colors hover:from-violet-500 hover:to-violet-400">
+        <button
+          onClick={() => navigate("/auth")}
+          className="rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-5 py-3 text-white shadow transition-colors hover:from-violet-500 hover:to-violet-400"
+        >
           Get Started
         </button>
       </div>
@@ -33,10 +38,14 @@ export default function LandingPage() {
             Ready to build faster?
           </h1>
           <p className="mx-auto mt-3 max-w-2xl text-lg text-slate-400">
-            Start creating your database and APIs today. No credit card required.
+            Start creating your database and APIs today. No credit card
+            required.
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
-            <button className="rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-5 py-3 text-white shadow transition-colors hover:from-violet-500 hover:to-violet-400">
+            <button
+              onClick={() => navigate("/auth")}
+              className="rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-5 py-3 text-white shadow transition-colors hover:from-violet-500 hover:to-violet-400"
+            >
               Start Building Now
             </button>
           </div>
