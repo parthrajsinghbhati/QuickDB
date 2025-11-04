@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Auth = () => {
+    const navigate = useNavigate();
 
     // state for login or register
     const [state, setState] = React.useState("login");
@@ -20,8 +22,7 @@ const Auth = () => {
     // handle submit form
     const handleSubmit = (e) => {
         e.preventDefault();
-
-
+        navigate("/dashboard");
     };
 
     return (

@@ -1,10 +1,13 @@
 import heroImage from "../assets/hero-image.jpg";
 import FeaturesSection from "../components/FeaturesSection";
 import { useNavigate } from "react-router";
+import Navbar from "../components/Navbar";
 
 export default function LandingPage() {
   const navigate = useNavigate();
   return (
+    <>
+    <Navbar />
     <main className="px-6 py-16 text-center">
       <h1 className="text-6xl font-extrabold tracking-tight bg-gradient-to-r from-violet-400 via-violet-500 to-violet-300 bg-clip-text text-transparent">
         QuickDB
@@ -52,5 +55,6 @@ export default function LandingPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

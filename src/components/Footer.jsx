@@ -9,7 +9,7 @@ const Footer = () => {
           <div className="flex items-center space-x-2 mb-4 md:mb-0">
             <Database className="h-5 w-5 text-violet-400" />
             <span className="font-semibold">QuickDB</span>
-            <span className="text-muted-foreground">© 2024</span>
+            <span className="text-muted-foreground">© 2025</span>
           </div>
           <div className="flex space-x-6 text-sm text-muted-foreground">
             <a href="#" className="hover:text-primary transition-colors">
