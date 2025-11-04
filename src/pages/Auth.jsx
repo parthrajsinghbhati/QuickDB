@@ -20,9 +20,37 @@ const Auth = () => {
     };
 
     // handle submit form
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        navigate("/dashboard");
+        
+        try {
+            const endpoint = state === 'login' ? 'login' : 'register';
+            console.log(`http://localhost:5001/api/auth/${endpoint}`)
+            const response = await fetch(`http://localhost:5001/api/auth/${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Store token in localStorage
+                localStorage.setItem('token', result.token);
+                localStorage.setItem('user', JSON.stringify(result.user));
+                
+                // Navigate to dashboard
+                navigate("/dashboard");
+            } else {
+                // Handle errors
+                alert(result.error || result.errors?.[0]?.msg || 'An error occurred');
+            }
+        } catch (error) {
+            console.error('Authentication error:', error);
+            alert('Network error. Please try again.');
+        }
     };
 
     return (
