@@ -25,8 +25,8 @@ const Auth = () => {
         
         try {
             const endpoint = state === 'login' ? 'login' : 'register';
-            console.log(`http://localhost:5001/api/auth/${endpoint}`)
-            const response = await fetch(`http://localhost:5001/api/auth/${endpoint}`, {
+            console.log(`https://quickdb-backend.onrender.com/api/auth/${endpoint}`)
+            const response = await fetch(`https://quickdb-backend.onrender.com/api/auth/${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
