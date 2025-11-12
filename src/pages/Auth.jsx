@@ -7,12 +7,28 @@ const Auth = () => {
     // state for login or register
     const [state, setState] = React.useState("login");
 
+    // loading and error states
+    const [error, setError] = React.useState("");
+    const [loading, setLoading] = React.useState(false);
+
     // state for input value
     const [data, setData] = React.useState({
         name: "",
         email: "",
         password: "",
     });
+
+    // auto-redirect if already authenticated
+    React.useEffect(() => {
+        try {
+            const token = localStorage.getItem('token');
+            if (token) {
+                navigate('/dashboard', { replace: true });
+            }
+        } catch {
+            // ignore localStorage errors
+        }
+    }, [navigate]);
 
     // handle change input value
     const onChangeHandler = (e) => {
@@ -22,11 +38,12 @@ const Auth = () => {
     // handle submit form
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+        setError("");
+        setLoading(true);
         try {
             const endpoint = state === 'login' ? 'login' : 'register';
             console.log(`https://quickdb-backend.onrender.com/api/auth/${endpoint}`)
-            const response = await fetch(`https://quickdb-backend.onrender.com/api/auth/${endpoint}`, {
+            const response = await fetch(`http://localhost:5001/api/auth/${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -44,17 +61,36 @@ const Auth = () => {
                 // Navigate to dashboard
                 navigate("/dashboard");
             } else {
-                // Handle errors
-                alert(result.error || result.errors?.[0]?.msg || 'An error occurred');
+                // Handle errors with friendly messages
+                let friendly = 'An error occurred';
+                if (response.status === 404 && state === 'login') {
+                    friendly = 'User not found. Please sign up first.';
+                } else if (response.status === 401 && state === 'login') {
+                    friendly = 'Invalid credentials. Please check your password.';
+                } else if (response.status === 400 && state === 'register') {
+                    friendly = result?.message === 'User already exists' 
+                      ? 'User already exists. Please log in.' 
+                      : (result.errors?.[0]?.msg || 'Please check the form and try again.');
+                } else {
+                    friendly = result?.message || result?.error || result.errors?.[0]?.msg || friendly;
+                }
+                setError(friendly);
             }
         } catch (error) {
             console.error('Authentication error:', error);
-            alert('Network error. Please try again.');
+            setError('Network error. Please try again.');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <div className="flex items-center justify-center min-h-[80vh]">
+        {loading && (
+            <div className="fixed top-0 left-0 w-full h-1 z-50">
+                <div className="h-full bg-indigo-500 animate-pulse" />
+            </div>
+        )}
         <form
             onSubmit={handleSubmit}
             className="w-full sm:w-[350px] text-center border border-zinc-300/60 dark:border-zinc-700 rounded-2xl px-8 bg-white dark:bg-zinc-900"
@@ -101,9 +137,13 @@ const Auth = () => {
                 </a>
             </div>
 
-            <button type="submit" className="mt-2 w-full h-11 rounded-full text-white bg-indigo-500 hover:opacity-90 transition-opacity" >
-                {state === "login" ? "Login" : "Create Account"}
+            <button type="submit" disabled={loading} className="mt-2 w-full h-11 rounded-full text-white bg-indigo-500 hover:opacity-90 transition-opacity disabled:opacity-60" >
+                {loading ? 'Please wait…' : (state === "login" ? "Login" : "Create Account")}
             </button>
+
+            {error && (
+                <p className="text-sm text-red-600 dark:text-red-500 mt-3">{error}</p>
+            )}
 
             <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-3 mb-11">
                 {state === "login"
