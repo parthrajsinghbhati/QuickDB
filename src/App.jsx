@@ -5,8 +5,11 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import CreateDatabase from "./pages/CreateDatabase";
 import Databases from "./pages/Databases";
-import DatabaseDetail from "./pages/DatabaseDetail";
+import DatabaseDetail from "./components/DatabaseDetail";
 import CreateTable from "./pages/CreateTable";
+import ApiDocs from "./pages/ApiDocs";
+import ApiKeys from "./pages/ApiKeys";
+import TableDetail from "./pages/TableDetail";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Footer from "./components/Footer";
 
@@ -53,6 +56,30 @@ function App() {
           element={
             <ProtectedRoute>
               <CreateTable />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/database/:databaseId/table/:tableId"
+          element={
+            <ProtectedRoute>
+              <TableDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/docs"
+          element={
+            <ProtectedRoute>
+              <ApiDocs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/keys"
+          element={
+            <ProtectedRoute>
+              <ApiKeys />
             </ProtectedRoute>
           }
         />

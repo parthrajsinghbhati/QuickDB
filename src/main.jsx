@@ -4,10 +4,14 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App.jsx";
 
+import { DatabaseProvider } from "./context/DatabaseContext";
+
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <StrictMode>
-      <App />
+      <DatabaseProvider>
+        <App />
+      </DatabaseProvider>
     </StrictMode>
   </BrowserRouter>
 );

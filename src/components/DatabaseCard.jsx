@@ -14,21 +14,21 @@ const DatabaseCard = ({ db }) => {
           </div>
         </div>
         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-          db.status === 'active' 
+          (db.status || 'active') === 'active' 
             ? 'bg-violet-500/10 text-violet-400 border border-violet-500/20' 
             : 'bg-slate-700/30 text-slate-400 border border-slate-700/50'
         }`}>
-          {db.status}
+          {db.status || 'Active'}
         </span>
       </div>
       
       <p className="text-slate-400 text-sm mb-6 h-10 line-clamp-2">
-        {db.description}
+        {db.description || 'No description provided'}
       </p>
       
       <div className="flex items-center justify-between text-xs text-slate-500 mb-6">
-        <span>{db.tables} tables</span>
-        <span>Updated {db.lastUpdated}</span>
+        <span>{db._count?.tables || db.tables || 0} tables</span>
+        <span>Updated {db.updatedAt ? new Date(db.updatedAt).toLocaleDateString() : (db.lastUpdated || 'Recently')}</span>
       </div>
 
       <div className="flex items-center gap-3">

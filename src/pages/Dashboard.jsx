@@ -1,28 +1,34 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Database, Activity, Plus, FileText, BarChart2, ArrowRight, Rocket } from 'lucide-react'
+import { Database, Activity, Plus, FileText, BarChart2, ArrowRight, Rocket, Loader, ChevronLeft, ChevronRight } from 'lucide-react'
 import DashboardNavbar from '../components/DashboardNavbar'
 import Sidebar from '../components/Sidebar'
+import useDatabases from '../hooks/useDatabases'
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const { databases, loading, error, pagination, fetchDatabases } = useDatabases();
+  const [searchQuery, setSearchQuery] = useState('');
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Dummy data for stats
-  const stats = [
-    { label: 'Total Databases', value: '3', icon: Database, color: 'text-blue-400' },
-    { label: 'Active Tables', value: '12', icon: BarChart2, color: 'text-indigo-400' },
-  ];
+  useEffect(() => {
+    fetchDatabases(1, 9, searchQuery);
+  }, [fetchDatabases, searchQuery]);
 
-  // Dummy data for recent databases
-  const recentDatabases = [
-    { name: 'E-commerce Store', tables: 5, time: '2 hours ago' },
-    { name: 'Blog Platform', tables: 3, time: '1 day ago' },
-    { name: 'User Management', tables: 4, time: '3 days ago' },
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.totalPages) {
+      fetchDatabases(newPage, 9, searchQuery);
+    }
+  };
+
+  // Stats
+  const stats = [
+    { label: 'Total Databases', value: pagination.total, icon: Database, color: 'text-blue-400' },
+    { label: 'Active Tables', value: databases.reduce((acc, db) => acc + (db._count?.tables || 0), 0), icon: BarChart2, color: 'text-indigo-400' },
   ];
 
   return (
@@ -66,29 +72,55 @@ const Dashboard = () => {
                 </div>
               </div>
               
-              <div className="space-y-4">
-                {recentDatabases.map((db, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-slate-800/40 rounded-lg border border-slate-800/50 hover:border-slate-700 transition-colors">
-                    <div>
-                      <h3 className="font-semibold text-slate-200">{db.name}</h3>
-                      <p className="text-xs text-slate-500 mt-1">{db.tables} tables • {db.time}</p>
-                    </div>
-                    <button 
-                      onClick={() => navigate('/dashboard/database/1')}
-                      className="text-sm text-slate-400 hover:text-violet-400 font-medium transition-colors cursor-pointer"
-                    >
-                      Open
-                    </button>
-                  </div>
-                ))}
-              </div>
+              {loading ? (
+                <div className="flex justify-center py-8">
+                  <Loader className="animate-spin text-violet-500" size={32} />
+                </div>
+              ) : error ? (
+                <div className="text-red-400 text-center py-4">{error}</div>
+              ) : (
+                <div className="space-y-4">
+                  {databases.length === 0 ? (
+                    <p className="text-slate-500 text-center py-4">No databases found.</p>
+                  ) : (
+                    databases.map((db) => (
+                      <div key={db.id} className="flex items-center justify-between p-4 bg-slate-800/40 rounded-lg border border-slate-800/50 hover:border-slate-700 transition-colors">
+                        <div>
+                          <h3 className="font-semibold text-slate-200">{db.name}</h3>
+                          <p className="text-xs text-slate-500 mt-1">{db._count?.tables || 0} tables • {new Date(db.createdAt).toLocaleDateString()}</p>
+                        </div>
+                        <button 
+                          onClick={() => navigate(`/dashboard/database/${db.id}`)}
+                          className="text-sm text-slate-400 hover:text-violet-400 font-medium transition-colors cursor-pointer"
+                        >
+                          Open
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
               
-              <button 
-                onClick={() => navigate('/dashboard/databases')}
-                className="w-full mt-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors text-sm font-medium cursor-pointer"
-              >
-                View All Databases
-              </button>
+              {/* Pagination */}
+              <div className="flex justify-center items-center gap-4 mt-6">
+                  <button
+                    onClick={() => handlePageChange(pagination.page - 1)}
+                    disabled={pagination.page === 1}
+                    className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <span className="text-slate-400 text-sm">
+                    Page {pagination.page} of {pagination.totalPages}
+                  </span>
+                  <button
+                    onClick={() => handlePageChange(pagination.page + 1)}
+                    disabled={pagination.page === pagination.totalPages}
+                    className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
             </div>
 
             {/* Quick Actions */}
@@ -112,7 +144,10 @@ const Dashboard = () => {
                   <span className="font-medium">Create New Database</span>
                 </button>
                 
-                <button className="w-full flex items-center gap-3 p-4 bg-slate-800/40 hover:bg-slate-800 text-slate-300 rounded-lg border border-slate-800 transition-colors cursor-pointer group">
+                <button 
+                  onClick={() => navigate('/dashboard/docs')}
+                  className="w-full flex items-center gap-3 p-4 bg-slate-800/40 hover:bg-slate-800 text-slate-300 rounded-lg border border-slate-800 transition-colors cursor-pointer group"
+                >
                   <Activity size={20} className="text-slate-400 group-hover:text-violet-400 transition-colors" />
                   <span className="font-medium">View API Documentation</span>
                 </button>

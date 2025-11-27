@@ -1,50 +1,30 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Plus } from 'lucide-react'
+import { Search, Plus, Loader, ChevronLeft, ChevronRight } from 'lucide-react'
 import DashboardNavbar from '../components/DashboardNavbar'
 import Sidebar from '../components/Sidebar'
 import DatabaseCard from '../components/DatabaseCard'
+import useDatabases from '../hooks/useDatabases'
 
 const Databases = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const { databases, loading, error, pagination, fetchDatabases } = useDatabases();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Dummy data matching the design
-  const databases = [
-    {
-      id: 1,
-      name: 'E-commerce Store',
-      description: 'Product catalog and order management system',
-      status: 'active',
-      tables: 5,
-      lastUpdated: '2 hours ago'
-    },
-    {
-      id: 2,
-      name: 'Blog Platform',
-      description: 'Content management for blog articles',
-      status: 'active',
-      tables: 3,
-      lastUpdated: '1 day ago'
-    },
-    {
-      id: 3,
-      name: 'User Management',
-      description: 'Authentication and user profiles',
-      status: 'inactive',
-      tables: 4,
-      lastUpdated: '3 days ago'
-    }
-  ];
+  useEffect(() => {
+    fetchDatabases(1, 9, searchQuery);
+  }, [fetchDatabases, searchQuery]);
 
-  const filteredDatabases = databases.filter(db => 
-    db.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.totalPages) {
+      fetchDatabases(newPage, 9, searchQuery);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -81,11 +61,48 @@ const Databases = () => {
           </div>
           
           {/* Database Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredDatabases.map((db) => (
-              <DatabaseCard key={db.id} db={db} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex justify-center py-8">
+              <Loader className="animate-spin text-violet-500" size={32} />
+            </div>
+          ) : error ? (
+            <div className="text-red-400 text-center py-4">{error}</div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {databases.length === 0 ? (
+                  <div className="col-span-full text-center py-8 text-slate-500">
+                    No databases found. Create one to get started.
+                  </div>
+                ) : (
+                  databases.map((db) => (
+                    <DatabaseCard key={db.id} db={db} />
+                  ))
+                )}
+              </div>
+
+              {/* Pagination */}
+              <div className="flex justify-center items-center gap-4 mt-8">
+                <button
+                  onClick={() => handlePageChange(pagination.page - 1)}
+                  disabled={pagination.page === 1}
+                  className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                <span className="text-slate-400 text-sm">
+                  Page {pagination.page} of {pagination.totalPages}
+                </span>
+                <button
+                  onClick={() => handlePageChange(pagination.page + 1)}
+                  disabled={pagination.page === pagination.totalPages}
+                  className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

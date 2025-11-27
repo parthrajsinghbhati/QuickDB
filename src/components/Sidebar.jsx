@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { LayoutDashboard, Database, Plus, FileText } from "lucide-react";
+import { LayoutDashboard, Database, Plus, FileText, Key } from "lucide-react";
 
 const Sidebar = ({ isOpen }) => {
   const navigate = useNavigate();
@@ -10,6 +10,7 @@ const Sidebar = ({ isOpen }) => {
     { icon: Database, text: "My Databases", path: "/dashboard/databases" },
     { icon: Plus, text: "Create Database", path: "/dashboard/create" },
     { icon: FileText, text: "API Docs", path: "/dashboard/docs" },
+    { icon: Key, text: "API Keys", path: "/dashboard/keys" },
   ];
 
   return (

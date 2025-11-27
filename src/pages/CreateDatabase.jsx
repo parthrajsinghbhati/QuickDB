@@ -2,14 +2,28 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardNavbar from '../components/DashboardNavbar';
 import Sidebar from '../components/Sidebar';
-import { Database, Plus, X } from 'lucide-react';
+import { Database, Plus, X, Loader } from 'lucide-react';
+import useDatabases from '../hooks/useDatabases';
 
 const CreateDatabase = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const { createDatabase, loading, error } = useDatabases();
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+
+  const handleSubmit = async () => {
+    if (!name.trim()) return;
+    try {
+      await createDatabase(name, description);
+      navigate('/dashboard');
+    } catch (err) {
+      // Error is handled by context and displayed below
+    }
   };
 
   return (
@@ -33,6 +47,12 @@ const CreateDatabase = () => {
               </div>
               <p className="text-slate-400 mb-6">Choose a name and description for your new database</p>
 
+              {error && (
+                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400">
+                  {error}
+                </div>
+              )}
+
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-slate-200 mb-2">
@@ -40,6 +60,8 @@ const CreateDatabase = () => {
                   </label>
                   <input 
                     type="text" 
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     placeholder="e.g., E-commerce Store, Blog Platform"
                     className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent transition-all"
                   />
@@ -52,6 +74,8 @@ const CreateDatabase = () => {
                   </label>
                   <textarea 
                     rows="4"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                     placeholder="Describe what this database will be used for..."
                     className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent transition-all resize-none"
                   ></textarea>
@@ -59,8 +83,12 @@ const CreateDatabase = () => {
                 </div>
 
                 <div className="flex items-center gap-4 pt-4">
-                  <button className="flex-1 bg-violet-600 hover:bg-violet-500 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer">
-                    <Plus className="w-5 h-5" />
+                  <button 
+                    onClick={handleSubmit}
+                    disabled={loading || !name.trim()}
+                    className="flex-1 bg-violet-600 hover:bg-violet-500 disabled:bg-violet-600/50 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    {loading ? <Loader className="animate-spin" size={20} /> : <Plus className="w-5 h-5" />}
                     Create Database
                   </button>
                   <button 
@@ -73,37 +101,7 @@ const CreateDatabase = () => {
               </div>
             </div>
 
-            {/* What's Next Card */}
-            <div className="bg-slate-900 p-8 rounded-xl border border-slate-800 shadow-lg text-center">
-              <h3 className="text-xl font-semibold text-white mb-4">What's Next?</h3>
-              <p className="text-slate-300 mb-8">After creating your database, you'll be able to:</p>
-              
-              <div className="space-y-6 flex flex-col items-center">
-                <div className="flex items-center gap-4 w-full max-w-md">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-violet-600 text-white flex items-center justify-center font-bold text-base shadow-lg shadow-violet-900/20">1</div>
-                  <div className="text-center flex-1">
-                    <h4 className="text-white font-medium text-lg">Add Tables</h4>
-                    <p className="text-slate-400 text-sm">Create tables to structure your data</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-4 w-full max-w-md">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-violet-600 text-white flex items-center justify-center font-bold text-base shadow-lg shadow-violet-900/20">2</div>
-                  <div className="text-center flex-1">
-                    <h4 className="text-white font-medium text-lg">Define Columns</h4>
-                    <p className="text-slate-400 text-sm">Set up column names, types, and constraints</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-4 w-full max-w-md">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-violet-600 text-white flex items-center justify-center font-bold text-base shadow-lg shadow-violet-900/20">3</div>
-                  <div className="text-center flex-1">
-                    <h4 className="text-white font-medium text-lg">Use Auto-Generated APIs</h4>
-                    <p className="text-slate-400 text-sm">Access your data via RESTful APIs automatically created for each table</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>

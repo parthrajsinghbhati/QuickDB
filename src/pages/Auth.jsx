@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 const Auth = () => {
     const navigate = useNavigate();
@@ -41,44 +42,34 @@ const Auth = () => {
         setError("");
         setLoading(true);
         try {
-            const endpoint = state === 'login' ? 'login' : 'register';
-            console.log(`https://quickdb-backend.onrender.com/api/auth/${endpoint}`)
-            const response = await fetch(`https://quickdb-backend.onrender.com/api/auth/${endpoint}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                // Store token in localStorage
-                localStorage.setItem('token', result.token);
-                localStorage.setItem('user', JSON.stringify(result.user));
-                
-                // Navigate to dashboard
-                navigate("/dashboard");
-            } else {
-                // Handle errors with friendly messages
-                let friendly = 'An error occurred';
-                if (response.status === 404 && state === 'login') {
-                    friendly = 'User not found. Please sign up first.';
-                } else if (response.status === 401 && state === 'login') {
-                    friendly = 'Invalid credentials. Please check your password.';
-                } else if (response.status === 400 && state === 'register') {
-                    friendly = result?.message === 'User already exists' 
-                      ? 'User already exists. Please log in.' 
-                      : (result.errors?.[0]?.msg || 'Please check the form and try again.');
-                } else {
-                    friendly = result?.message || result?.error || result.errors?.[0]?.msg || friendly;
-                }
-                setError(friendly);
-            }
+            const endpoint = state === 'login' ? '/auth/login' : '/auth/register';
+            const response = await api.post(endpoint, data);
+            
+            // Store token in localStorage
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+            
+            // Navigate to dashboard
+            navigate("/dashboard");
         } catch (error) {
             console.error('Authentication error:', error);
-            setError('Network error. Please try again.');
+            
+            let friendly = 'An error occurred';
+            const status = error.response?.status;
+            const result = error.response?.data;
+
+            if (status === 404 && state === 'login') {
+                friendly = 'User not found. Please sign up first.';
+            } else if (status === 401 && state === 'login') {
+                friendly = 'Invalid credentials. Please check your password.';
+            } else if (status === 400 && state === 'register') {
+                friendly = result?.message === 'User already exists' 
+                  ? 'User already exists. Please log in.' 
+                  : (result.errors?.[0]?.msg || 'Please check the form and try again.');
+            } else {
+                friendly = result?.message || result?.error || result?.errors?.[0]?.msg || friendly;
+            }
+            setError(friendly);
         } finally {
             setLoading(false);
         }
