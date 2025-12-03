@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Search, Loader, ChevronLeft, ChevronRight, RefreshCw, Trash2, Edit2 } from 'lucide-react';
+import { ArrowLeft, Plus, Search, Loader, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
+import TableGrid from '../components/TableGrid';
 import DashboardNavbar from '../components/DashboardNavbar';
 import Sidebar from '../components/Sidebar';
 import api from '../services/api';
@@ -132,56 +133,12 @@ const TableDetail = () => {
               <div className="text-red-400 text-center py-8">{error}</div>
             ) : (
               <>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-slate-800/50 border-b border-slate-700">
-                        <th className="p-4 text-slate-400 font-medium text-sm">ID</th>
-                        {columns.map((col, idx) => (
-                          <th key={idx} className="p-4 text-slate-400 font-medium text-sm whitespace-nowrap">
-                            {col.name} <span className="text-xs text-slate-600 ml-1">({col.type})</span>
-                          </th>
-                        ))}
-                        <th className="p-4 text-slate-400 font-medium text-sm text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-800">
-                      {records.length === 0 ? (
-                        <tr>
-                          <td colSpan={columns.length + 2} className="p-8 text-center text-slate-500">
-                            No records found. Add some data to get started.
-                          </td>
-                        </tr>
-                      ) : (
-                        records.map((record) => (
-                          <tr key={record.id} className="hover:bg-slate-800/30 transition-colors group">
-                            <td className="p-4 text-slate-500 font-mono text-xs">{record.id}</td>
-                            {columns.map((col, idx) => (
-                              <td key={idx} className="p-4 text-slate-300 text-sm whitespace-nowrap max-w-xs overflow-hidden text-ellipsis">
-                                {typeof record.data[col.name] === 'object' 
-                                  ? JSON.stringify(record.data[col.name]) 
-                                  : String(record.data[col.name] || '-')}
-                              </td>
-                            ))}
-                            <td className="p-4 text-right">
-                              <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button className="p-1.5 hover:bg-slate-700 rounded text-slate-400 hover:text-blue-400 transition-colors">
-                                  <Edit2 size={16} />
-                                </button>
-                                <button 
-                                  onClick={() => handleDeleteRecord(record.id)}
-                                  className="p-1.5 hover:bg-slate-700 rounded text-slate-400 hover:text-red-400 transition-colors"
-                                >
-                                  <Trash2 size={16} />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                <TableGrid 
+                  columns={columns}
+                  records={records}
+                  onDeleteRecord={handleDeleteRecord}
+                  onEditRecord={(record) => console.log('Edit record:', record)}
+                />
 
                 {/* Pagination Footer */}
                 <div className="flex items-center justify-between p-4 border-t border-slate-800 bg-slate-900/20">
