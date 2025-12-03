@@ -1,13 +1,26 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Table, MoreVertical } from 'lucide-react'
+import { Table, Trash2 } from 'lucide-react'
+import useTables from '../hooks/useTables'
 
 const TableCard = ({ table }) => {
   const navigate = useNavigate();
+  const { deleteTable } = useTables();
   
   const handleNavigate = () => {
     if (table.databaseId) {
       navigate(`/dashboard/database/${table.databaseId}/table/${table.id}`);
+    }
+  };
+
+  const handleDelete = async (e) => {
+    e.stopPropagation();
+    if (window.confirm('Are you sure you want to delete this table?')) {
+      try {
+        await deleteTable(table.id);
+      } catch (error) {
+        console.error('Failed to delete table:', error);
+      }
     }
   };
 
@@ -26,8 +39,11 @@ const TableCard = ({ table }) => {
             <p className="text-xs text-slate-500">{new Date(table.updatedAt).toLocaleDateString()}</p>
           </div>
         </div>
-        <button className="text-slate-500 hover:text-slate-300 transition-colors">
-          <MoreVertical size={20} />
+        <button 
+          onClick={handleDelete}
+          className="text-slate-500 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition-colors"
+        >
+          <Trash2 size={20} />
         </button>
       </div>
 

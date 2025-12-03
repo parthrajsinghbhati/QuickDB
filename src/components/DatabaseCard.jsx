@@ -1,7 +1,21 @@
 import React from 'react'
 import { Database, Trash2, ExternalLink } from 'lucide-react'
+import useDatabases from '../hooks/useDatabases'
 
 const DatabaseCard = ({ db }) => {
+  const { deleteDatabase } = useDatabases();
+
+  const handleDelete = async (e) => {
+    e.stopPropagation();
+    if (window.confirm('Are you sure you want to delete this database?')) {
+      try {
+        await deleteDatabase(db.id);
+      } catch (error) {
+        console.error('Failed to delete database:', error);
+      }
+    }
+  };
+
   return (
     <div className="group bg-slate-900/40 hover:bg-slate-800/60 p-6 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all duration-300">
       <div className="flex items-start justify-between mb-4">
@@ -39,7 +53,10 @@ const DatabaseCard = ({ db }) => {
           <ExternalLink size={16} />
           Open
         </button>
-        <button className="p-2.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer">
+        <button 
+          onClick={handleDelete}
+          className="p-2.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
+        >
           <Trash2 size={18} />
         </button>
       </div>

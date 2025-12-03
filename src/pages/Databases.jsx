@@ -9,6 +9,7 @@ import useDatabases from '../hooks/useDatabases'
 const Databases = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortOption, setSortOption] = useState('newest');
   const navigate = useNavigate();
   const { databases, loading, error, pagination, fetchDatabases } = useDatabases();
 
@@ -17,12 +18,40 @@ const Databases = () => {
   };
 
   useEffect(() => {
-    fetchDatabases(1, 9, searchQuery);
-  }, [fetchDatabases, searchQuery]);
+    let sortBy = 'createdAt';
+    let order = 'desc';
+
+    if (sortOption === 'oldest') {
+      sortBy = 'createdAt';
+      order = 'asc';
+    } else if (sortOption === 'name_asc') {
+      sortBy = 'name';
+      order = 'asc';
+    } else if (sortOption === 'name_desc') {
+      sortBy = 'name';
+      order = 'desc';
+    }
+
+    fetchDatabases(1, 9, searchQuery, sortBy, order);
+  }, [fetchDatabases, searchQuery, sortOption]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.totalPages) {
-      fetchDatabases(newPage, 9, searchQuery);
+      let sortBy = 'createdAt';
+      let order = 'desc';
+
+      if (sortOption === 'oldest') {
+        sortBy = 'createdAt';
+        order = 'asc';
+      } else if (sortOption === 'name_asc') {
+        sortBy = 'name';
+        order = 'asc';
+      } else if (sortOption === 'name_desc') {
+        sortBy = 'name';
+        order = 'desc';
+      }
+      
+      fetchDatabases(newPage, 9, searchQuery, sortBy, order);
     }
   };
 
@@ -48,16 +77,29 @@ const Databases = () => {
             </button>
           </div>
 
-          {/* Search Bar */}
-          <div className="relative mb-8 max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-            <input 
-              type="text"
-              placeholder="Search databases..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/50 transition-all"
-            />
+          {/* Search and Sort */}
+          <div className="flex flex-col md:flex-row gap-4 mb-8">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+              <input 
+                type="text"
+                placeholder="Search databases..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/50 transition-all"
+              />
+            </div>
+            
+            <select
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              className="px-4 py-3 bg-slate-900/50 border border-slate-800 rounded-xl text-slate-100 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/50 transition-all"
+            >
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="name_asc">Name (A-Z)</option>
+              <option value="name_desc">Name (Z-A)</option>
+            </select>
           </div>
           
           {/* Database Grid */}

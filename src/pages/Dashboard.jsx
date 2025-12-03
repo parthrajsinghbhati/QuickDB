@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Database, Activity, Plus, FileText, BarChart2, ArrowRight, Rocket, Loader, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Database, Activity, Plus, FileText, BarChart2, ArrowRight, Rocket, Loader } from 'lucide-react'
 import DashboardNavbar from '../components/DashboardNavbar'
 import Sidebar from '../components/Sidebar'
 import useDatabases from '../hooks/useDatabases'
@@ -16,14 +16,10 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchDatabases(1, 9, searchQuery);
+    fetchDatabases(1, 3, searchQuery);
   }, [fetchDatabases, searchQuery]);
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= pagination.totalPages) {
-      fetchDatabases(newPage, 9, searchQuery);
-    }
-  };
+
 
   // Stats
   const stats = [
@@ -62,14 +58,22 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             {/* Recent Databases */}
             <div className="bg-slate-900/40 p-6 rounded-xl border border-slate-800">
-              <div className="flex items-start gap-3 mb-6">
-                <div className="p-2 bg-slate-800 rounded-lg">
-                  <Database className="text-slate-100" size={20} />
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-slate-800 rounded-lg">
+                    <Database className="text-slate-100" size={20} />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold text-slate-100">Recent Databases</h2>
+                    <p className="text-slate-400 text-sm mt-1">Your most recently accessed databases</p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-slate-100">Recent Databases</h2>
-                  <p className="text-slate-400 text-sm mt-1">Your most recently accessed databases</p>
-                </div>
+                <button 
+                  onClick={() => navigate('/dashboard/databases')}
+                  className="text-sm text-violet-400 hover:text-violet-300 font-medium transition-colors cursor-pointer"
+                >
+                  Show All
+                </button>
               </div>
               
               {loading ? (
@@ -100,27 +104,6 @@ const Dashboard = () => {
                   )}
                 </div>
               )}
-              
-              {/* Pagination */}
-              <div className="flex justify-center items-center gap-4 mt-6">
-                  <button
-                    onClick={() => handlePageChange(pagination.page - 1)}
-                    disabled={pagination.page === 1}
-                    className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <ChevronLeft size={20} />
-                  </button>
-                  <span className="text-slate-400 text-sm">
-                    Page {pagination.page} of {pagination.totalPages}
-                  </span>
-                  <button
-                    onClick={() => handlePageChange(pagination.page + 1)}
-                    disabled={pagination.page === pagination.totalPages}
-                    className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <ChevronRight size={20} />
-                  </button>
-                </div>
             </div>
 
             {/* Quick Actions */}

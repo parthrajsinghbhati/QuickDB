@@ -14,10 +14,10 @@ export const DatabaseProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [pagination, setPagination] = useState({ page: 1, limit: 9, total: 0, totalPages: 0 });
 
-  const fetchDatabases = useCallback(async (page = 1, limit = 9, search = '') => {
+  const fetchDatabases = useCallback(async (page = 1, limit = 9, search = '', sortBy = 'createdAt', order = 'desc') => {
     setLoading(true);
     try {
-      const response = await api.get(`/databases?page=${page}&limit=${limit}&search=${search}`);
+      const response = await api.get(`/databases?page=${page}&limit=${limit}&search=${search}&sortBy=${sortBy}&order=${order}`);
       setDatabases(response.data.databases);
       setPagination(response.data.pagination);
       setError(null);
@@ -70,10 +70,10 @@ export const DatabaseProvider = ({ children }) => {
     }
   };
 
-  const fetchTables = useCallback(async (databaseId, page = 1, limit = 9, search = '') => {
+  const fetchTables = useCallback(async (databaseId, page = 1, limit = 9, search = '', sortBy = 'createdAt', order = 'desc') => {
     setLoading(true);
     try {
-      const response = await api.get(`/tables?databaseId=${databaseId}&page=${page}&limit=${limit}&search=${search}`);
+      const response = await api.get(`/tables?databaseId=${databaseId}&page=${page}&limit=${limit}&search=${search}&sortBy=${sortBy}&order=${order}`);
       setTables(response.data.tables);
       setPagination(response.data.pagination);
       setError(null);
