@@ -3,6 +3,8 @@
 QuickDB is a visual database management tool that allows users to create databases, tables, and APIs without writing code. This is the frontend application built with React and Vite.
 
 **Live URL:** [https://quick-db.vercel.app/](https://quick-db.vercel.app/)
+**Backend Repo:** [https://github.com/parthrajsinghbhati/quickdb_backend](https://github.com/parthrajsinghbhati/quickdb_backend)
+**Backend Live URL:** [https://quickdb-backend.onrender.com](https://quickdb-backend.onrender.com)
 
 ## Features
 
