@@ -1,60 +1,235 @@
-import heroImage from "../assets/hero-image.jpg";
-import FeaturesSection from "../components/FeaturesSection";
-import { useNavigate } from "react-router";
-import Navbar from "../components/Navbar";
+import React from 'react';
+import { useNavigate } from 'react-router';
 
 export default function LandingPage() {
   const navigate = useNavigate();
   return (
-    <>
-    <Navbar />
-    <main className="px-6 py-16 text-center">
-      <h1 className="text-6xl font-extrabold tracking-tight bg-gradient-to-r from-violet-400 via-violet-500 to-violet-300 bg-clip-text text-transparent">
-        QuickDB
-      </h1>
-      <p className="mx-auto mt-6 max-w-2xl text-xl font-medium leading-relaxed text-slate-200 md:text-2xl">
-        Create your database and backend APIs without writing code
-      </p>
-      <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300">
-        The fastest way to prototype, build, and deploy your database-driven
-        applications. No backend knowledge required.
-      </p>
-      <div className="mt-10 flex items-center justify-center gap-4">
-        <button
-          onClick={() => navigate("/auth")}
-          className="rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-5 py-3 text-white shadow transition-colors hover:from-violet-500 hover:to-violet-400"
-        >
-          Get Started
-        </button>
-      </div>
-      <img
-        src={heroImage}
-        alt="QuickDB"
-        className="mt-12 mx-auto w-full max-w-5xl md:max-w-6xl rounded-2xl shadow-xl ring-1 ring-slate-700/50 object-cover"
-      />
+    <div className="font-body selection:bg-primary-container selection:text-on-primary-container bg-background text-on-background overflow-x-hidden">
 
-      <FeaturesSection />
-
-      <section className="mt-20 w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] px-6 pt-32 pb-28">
-        <div className="mx-auto max-w-5xl text-center">
-          <h1 className="text-5xl font-extrabold tracking-tight text-slate-100">
-            Ready to build faster?
+      {/* TopNavBar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-3 flex justify-between items-center bg-zinc-950/60 backdrop-blur-xl rounded-full mt-6 max-w-4xl mx-auto border border-violet-500/15 shadow-[0px_0px_20px_rgba(124,58,237,0.1)] font-['Inter'] antialiased">
+        <div className="text-xl font-bold tracking-tighter text-zinc-100">QuickDB</div>
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate("/auth")} className="bg-primary text-on-primary-fixed px-5 py-2 rounded-full font-semibold text-sm hover:opacity-90 transition-all scale-95 active:opacity-80">Start Building</button>
+        </div>
+      </nav>
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-20 px-6 overflow-hidden">
+        {/* Ambient Glow Background */}
+        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
+        <div className="relative z-10 text-center max-w-5xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-highest border border-outline-variant/20 mb-8">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            <span className="text-xs font-mono uppercase tracking-widest text-on-surface-variant">Production Ready v2.4</span>
+          </div>
+          <h1 className="text-6xl md:text-8xl font-extrabold tracking-tighter mb-6 leading-[0.9] text-on-surface">
+            The database for <br />
+            <span className="gradient-text">Frontend Developers.</span>
           </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-lg text-slate-400">
-            Start creating your database and APIs today. No credit card
-            required.
+          <p className="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto mb-12">
+            Create your database and construct powerful backend APIs without writing backend code. Store and retrieve your data directly via HTTP APIs.
           </p>
-          <div className="mt-10 flex items-center justify-center gap-4">
-            <button
-              onClick={() => navigate("/auth")}
-              className="rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-5 py-3 text-white shadow transition-colors hover:from-violet-500 hover:to-violet-400"
-            >
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+            <button onClick={() => navigate("/auth")} className="cta-gradient px-8 py-4 rounded-xl font-bold text-lg text-white neon-bloom hover:scale-[1.02] transition-transform flex items-center gap-2">
               Start Building Now
+              <span className="material-symbols-outlined">arrow_forward</span>
             </button>
+
+          </div>
+        </div>
+        {/* Hero Visual: 3D-like Glass Card */}
+        <div className="mt-24 w-full max-w-6xl relative group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-secondary/50 rounded-[2rem] blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
+          <div className="relative bg-surface-container-low rounded-[2rem] border border-outline-variant/20 overflow-hidden shadow-2xl">
+            <div className="flex items-center gap-2 px-6 py-4 bg-surface-container-high border-b border-outline-variant/10">
+              <div className="flex gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/40"></div>
+                <div className="w-3 h-3 rounded-full bg-amber-500/20 border border-amber-500/40"></div>
+                <div className="w-3 h-3 rounded-full bg-emerald-500/20 border border-emerald-500/40"></div>
+              </div>
+              <div className="mx-auto text-xs font-mono text-on-surface-variant">query_editor.sql — cluster-us-east-1</div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-12 min-h-[400px]">
+              <div className="md:col-span-3 border-r border-outline-variant/10 p-6 bg-surface-container-low">
+                <div className="space-y-4">
+                  <div className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Schemas</div>
+                  <div className="flex items-center gap-2 text-sm text-primary"><span className="material-symbols-outlined text-sm">database</span> analytics_prod</div>
+                  <div className="flex items-center gap-2 text-sm text-on-surface-variant pl-4"><span className="material-symbols-outlined text-sm">table_chart</span> user_events</div>
+                  <div className="flex items-center gap-2 text-sm text-on-surface-variant pl-4"><span className="material-symbols-outlined text-sm">table_chart</span> edge_logs</div>
+                </div>
+              </div>
+              <div className="md:col-span-9 p-8 bg-surface-container-lowest font-mono text-sm leading-relaxed">
+                <div className="flex gap-4">
+                  <span className="text-outline/40">01</span>
+                  <span className="text-tertiary">SELECT</span>
+                  <span>*</span>
+                  <span className="text-tertiary">FROM</span>
+                  <span className="text-secondary">user_events</span>
+                </div>
+                <div className="flex gap-4">
+                  <span className="text-outline/40">02</span>
+                  <span className="text-tertiary">WHERE</span>
+                  <span>latency</span>
+                  <span className="text-primary-container">&lt;</span>
+                  <span className="text-primary">10</span>
+                </div>
+                <div className="flex gap-4">
+                  <span className="text-outline/40">03</span>
+                  <span className="text-tertiary">ORDER BY</span>
+                  <span>created_at</span>
+                  <span className="text-tertiary">DESC</span>
+                </div>
+                <div className="flex gap-4">
+                  <span className="text-outline/40">04</span>
+                  <span className="text-tertiary">LIMIT</span>
+                  <span className="text-primary">50</span>;
+                </div>
+                <div className="mt-8 p-4 rounded-lg bg-surface-container-high border border-primary/20">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs font-bold uppercase text-on-surface-variant tracking-tighter">Query Results</span>
+                    <span className="text-xs text-primary font-bold">Latency: 2ms</span>
+                  </div>
+                  <div className="space-y-2 opacity-60">
+                    <div className="h-2 w-full bg-outline-variant/20 rounded"></div>
+                    <div className="h-2 w-3/4 bg-outline-variant/20 rounded"></div>
+                    <div className="h-2 w-5/6 bg-outline-variant/20 rounded"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
-    </main>
-    </>
+      {/* Feature Showcase: Bento Grid */}
+      <section className="py-32 px-6 max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+          <div className="max-w-2xl">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-on-surface">Precision Instrumentation.</h2>
+            <p className="text-on-surface-variant text-lg">Beyond standard queries. We built QuickDB to handle the most demanding observability and transactional workloads at scale.</p>
+          </div>
+          <div className="text-right">
+            <div className="text-5xl font-extrabold text-primary mb-1">99.999%</div>
+            <div className="text-xs font-mono uppercase tracking-widest text-outline">Uptime Guaranteed SLA</div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[240px]">
+          {/* Card 1: Large Feature */}
+          <div className="md:col-span-2 md:row-span-2 glass-card rounded-[2rem] p-10 flex flex-col justify-between group overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[80px] -mr-32 -mt-32"></div>
+            <div>
+              <div className="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center mb-6 border border-primary/20">
+                <span className="material-symbols-outlined text-primary">public</span>
+              </div>
+              <h3 className="text-3xl font-bold mb-4">No Backend Setup</h3>
+              <p className="text-on-surface-variant text-lg max-w-md leading-relaxed">Skip the server configuration and database provisioning. We automatically provision scalable storage and REST APIs for you instantly.</p>
+            </div>
+            <div className="mt-8 flex gap-2">
+              <div className="px-3 py-1 rounded-full bg-surface-container-highest border border-outline-variant/10 text-xs font-mono">No Servers</div>
+              <div className="px-3 py-1 rounded-full bg-surface-container-highest border border-outline-variant/10 text-xs font-mono">No SQL</div>
+              <div className="px-3 py-1 rounded-full bg-surface-container-highest border border-outline-variant/10 text-xs font-mono">Instant API</div>
+            </div>
+            <img className="absolute bottom-0 right-0 w-3/4 h-3/4 object-cover opacity-20 mask-gradient-to-t" data-alt="Stylized glowing holographic world map with data points connected by thin light lines on a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcokFZfYvkYQTFAxliG4MFsRQbmklmAngCYlKt13USZooCofrBm-ojzCZ78Y8KthJooap1osS60eAPxsy4RLMXM5XP5FHXkVqBoxOY2W2Ey-M_CR8OiSBh3kCEFiz7eh4hfyEXhbQcam1jlFfom9aRe-fQih91tlDeaWv7Pl5twTCzkQbYSpPurTWYSOcFiq13YQVBWX5l2sQMRY3XOOzYQ8G-4BWK9A258f4EdNXDLfQjoaszKy_XE411z7E1ssCxfd7STQpm_bw" style={{ maskImage: "linear-gradient(to top right, transparent, black)" }} />
+          </div>
+          {/* Card 2: Medium Feature */}
+          <div className="md:row-span-2 glass-card rounded-[2rem] p-10 flex flex-col justify-between bg-surface-container-highest border-primary/5">
+            <div>
+              <div className="w-12 h-12 rounded-xl bg-secondary-container/20 flex items-center justify-center mb-6 border border-secondary/20">
+                <span className="material-symbols-outlined text-secondary">bolt</span>
+              </div>
+              <h3 className="text-3xl font-bold mb-4">Auto-Scaling</h3>
+              <p className="text-on-surface-variant leading-relaxed">Never provision a server again. Our serverless architecture scales from 0 to 1 million requests in seconds.</p>
+            </div>
+            <div className="relative h-32 w-full mt-4 bg-surface-container-low rounded-xl overflow-hidden border border-outline-variant/5">
+              <div className="absolute bottom-0 left-0 w-full h-full p-4 flex items-end gap-1">
+                <div className="w-full bg-primary/20 h-1/4 rounded-t-sm"></div>
+                <div className="w-full bg-primary/30 h-1/3 rounded-t-sm"></div>
+                <div className="w-full bg-primary/40 h-2/3 rounded-t-sm"></div>
+                <div className="w-full bg-primary/60 h-full rounded-t-sm animate-pulse"></div>
+                <div className="w-full bg-primary/50 h-3/4 rounded-t-sm"></div>
+              </div>
+            </div>
+          </div>
+          {/* Card 3: Wide Feature */}
+          <div className="md:col-span-2 glass-card rounded-[2rem] p-10 flex items-center justify-between gap-8 group">
+            <div className="flex-1">
+              <h3 className="text-2xl font-bold mb-2">Secure API Access</h3>
+              <p className="text-on-surface-variant text-sm">Generate secure API keys from our dashboard. Control exactly which tables your frontend applications can read from or write to.</p>
+            </div>
+            <div className="w-32 h-32 flex-shrink-0 relative">
+              <div className="absolute inset-0 bg-secondary/10 rounded-full animate-ping opacity-20"></div>
+              <div className="absolute inset-4 bg-secondary/20 rounded-full border border-secondary/40 flex items-center justify-center">
+                <span className="material-symbols-outlined text-3xl text-secondary">shield_lock</span>
+              </div>
+            </div>
+          </div>
+          {/* Card 4: Small Technical */}
+          <div className="glass-card rounded-[2rem] p-8 flex flex-col justify-center border-outline-variant/5">
+            <div className="text-xs font-mono text-primary mb-2 uppercase tracking-widest">Connect</div>
+            <h4 className="text-xl font-bold">Simple HTTP APIs</h4>
+            <p className="text-on-surface-variant text-xs mt-2">Use fetch() or axios directly from your frontend code. No complex ORMs or SQL required.</p>
+          </div>
+        </div>
+      </section>
+      {/* IDE Preview / Interactive Detail */}
+      <section className="py-32 bg-surface-container-low relative">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-20 items-center">
+          <div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-8">Built for the frontend workflow.</h2>
+            <div className="space-y-8">
+              <div className="flex gap-6">
+                <div className="w-10 h-10 rounded-lg bg-surface-container-high border border-outline-variant/20 flex-shrink-0 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary" data-weight="fill">table_chart</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg mb-2 text-on-surface">Visual Table Editor</h4>
+                  <p className="text-on-surface-variant text-sm">Create tables and columns in a drag-and-drop interface. No migrations or SQL knowledge needed.</p>
+                </div>
+              </div>
+              <div className="flex gap-6">
+                <div className="w-10 h-10 rounded-lg bg-surface-container-high border border-outline-variant/20 flex-shrink-0 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary" data-weight="fill">api</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg mb-2 text-on-surface">Instant API Generation</h4>
+                  <p className="text-on-surface-variant text-sm">The moment you create a table, we generate standard RESTful endpoints for your frontend to consume.</p>
+                </div>
+              </div>
+              <div className="flex gap-6">
+                <div className="w-10 h-10 rounded-lg bg-surface-container-high border border-outline-variant/20 flex-shrink-0 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary" data-weight="fill">code</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg mb-2 text-on-surface">Effortless Integration</h4>
+                  <p className="text-on-surface-variant text-sm">Grab your API key and start building your client-side application immediately using standard fetch requests.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="relative">
+            <div className="absolute -inset-10 bg-primary/10 blur-[100px] rounded-full"></div>
+            <div className="relative glass-card rounded-3xl p-2 border border-white/5 shadow-2xl">
+              <img className="rounded-2xl w-full" data-alt="High-fidelity UI screenshot of a dark-mode database management interface with neon charts and a code editor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrf3jCQcvC5GxGritNQfmwcttyxedli-6sYgiYK9-ve6SFmgyfXDjxHd4xnjjmRe245kFw4M8hJS5mN2UP_upD97lOfp0fraShR7pA91zEqZAz_ZVjdgPYIHaP5j6z_k_7INOqV12Cnva8SXOJmEYWPBd3ZAWsEfRMrP-UPDVUXeqsZ4a4Q9kf1-h4-pHgJJCjUCwOhfEttCS9KoO4FXQ_nxyoBUOdzJZmatc8cxXO2mpqjrqXVlxvmSS4zqfICGfsEaSvLH2MDU0" />
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* Call to Action */}
+      <section className="py-40 px-6">
+        <div className="max-w-5xl mx-auto cta-gradient rounded-[3rem] p-12 md:p-24 text-center relative overflow-hidden neon-bloom">
+          <div className="absolute top-0 left-0 w-full h-full opacity-10" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuABDCgQCvvv9OFqpFSSDlfpQTsdq3yu4Jk0UloZIlo2HRrcEhym9ER0j337a2UklGZsUmLXAcstA_6iGqlla808z9U9Y1mOt1waoB_kd9eiJZkxOBHt6Erc4bxP5i5sCGEXYU73Oh6cd1sXcTxbF2MgDd7z9Pfip543ZDvxUNJmaVM5M-hBQ4GjbdTCmUwO4AtETYwGSmCuhLfNPXdC-1Ts8u10SGP4jWm_D_zEISRrUoeiuuZZuca3GLvhrP2sz91Nyrkt05lLMBQ')" }}></div>
+          <div className="relative z-10">
+            <h2 className="text-4xl md:text-6xl font-extrabold tracking-tighter mb-8 leading-tight">
+              Focus on the frontend.<br />We handle the rest.
+            </h2>
+            <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-12">
+              Join frontend developers who ship faster by using QuickDB as their instant database and API layer.
+            </p>
+            <div className="flex flex-col md:flex-row gap-4 justify-center">
+              <button onClick={() => navigate("/auth")} className="bg-white text-primary px-10 py-5 rounded-2xl font-bold text-xl hover:scale-105 transition-transform">Start Building Free</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }

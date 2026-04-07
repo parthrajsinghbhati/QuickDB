@@ -1,13 +1,101 @@
 @import "tailwindcss";
 
+@theme {
+  --font-body: "Inter", sans-serif;
+  --font-headline: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
+  --font-mono: "Geist Mono", monospace;
+
+  --color-tertiary: #b0aeff;
+  --color-on-error-container: #ffb2b9;
+  --color-on-surface: #f6f3f5;
+  --color-secondary-fixed: #cdcdff;
+  --color-on-primary-container: #2b006e;
+  --color-inverse-primary: #6e3bd7;
+  --color-error-container: #a70138;
+  --color-on-tertiary: #2c287c;
+  --color-surface-container-lowest: #000000;
+  --color-on-primary-fixed-variant: #370086;
+  --color-on-primary-fixed: #000000;
+  --color-tertiary-dim: #9695ee;
+  --color-on-tertiary-fixed-variant: #312d81;
+  --color-primary-container: #ae8dff;
+  --color-on-secondary-fixed: #160bae;
+  --color-tertiary-fixed-dim: #9c9af3;
+  --color-surface-variant: #262528;
+  --color-surface-container: #19191c;
+  --color-on-surface-variant: #acaaad;
+  --color-on-primary: #39008c;
+  --color-tertiary-container: #a19ff9;
+  --color-primary-fixed: #ae8dff;
+  --color-surface-container-high: #1f1f22;
+  --color-outline: #767577;
+  --color-on-secondary-fixed-variant: #3a3ac8;
+  --color-surface-tint: #ba9eff;
+  --color-on-tertiary-container: #201c71;
+  --color-surface-container-highest: #262528;
+  --color-surface-container-low: #131315;
+  --color-error-dim: #d73357;
+  --color-on-tertiary-fixed: #0c005f;
+  --color-inverse-surface: #fcf8fb;
+  --color-surface-bright: #2c2c2f;
+  --color-on-secondary-container: #ccccff;
+  --color-surface-dim: #0e0e10;
+  --color-secondary-dim: #6063ee;
+  --color-secondary: #9093ff;
+  --color-secondary-fixed-dim: #bdbeff;
+  --color-inverse-on-surface: #555557;
+  --color-error: #ff6e84;
+  --color-primary-dim: #8455ef;
+  --color-background: #0e0e10;
+  --color-on-background: #f6f3f5;
+  --color-surface: #0e0e10;
+  --color-outline-variant: #48474a;
+  --color-on-error: #490013;
+  --color-on-secondary: #080079;
+  --color-primary-fixed-dim: #a27cff;
+  --color-primary: #ba9eff;
+  --color-secondary-container: #2f2ebe;
+  --color-tertiary-fixed: #aaa8ff;
+}
+
 @layer base {
   html {
-    color-scheme: light;
+    color-scheme: dark;
   }
   body {
-    @apply m-0 p-0 min-h-screen bg-[#0b1220] text-slate-100 antialiased;
+    background-color: var(--color-background);
+    color: var(--color-on-background);
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
   }
   a {
-    @apply text-violet-400 hover:text-violet-300;
+    color: var(--color-tertiary);
+    transition: color 0.2s;
+  }
+  a:hover {
+    color: var(--color-tertiary-dim);
+  }
+}
+
+@layer components {
+  .glass-card {
+    background: rgba(38, 37, 40, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(186, 158, 255, 0.15);
+  }
+  .neon-bloom {
+    box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.6), 0px 0px 8px rgba(186, 158, 255, 0.12);
+  }
+  .gradient-text {
+    background: linear-gradient(45deg, #ba9eff, #9093ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .cta-gradient {
+    background: linear-gradient(45deg, #6e3bd7, #2f2ebe);
   }
 }
