@@ -4,23 +4,10 @@ import { useNavigate } from "react-router-dom";
 export default function Navbar() {
   const navigate = useNavigate();
   return (
-    <nav className="sticky top-0 left-0 right-0 z-50 w-full border-b border-slate-800 bg-[#0b1220]/70 backdrop-blur-md">
-      <div className="flex items-center justify-between w-full px-6 py-4">
-        {/* Logo */}
-        <div className="flex items-center gap-2">
-          <Database className="h-6 w-6 text-violet-400" />
-          <span className="font-semibold text-white text-lg">QuickDB</span>
-        </div>
-
-        {/* Buttons */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button onClick={() => navigate('/auth')} className="rounded-lg px-3 py-2 text-sm font-medium text-slate-200 transition-colors hover:bg-slate-800 hover:text-violet-300">
-            Sign in
-          </button>
-          <button onClick={() => navigate('/auth')} className="rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 px-4 py-2 text-sm font-medium text-white shadow-lg transition-colors hover:from-violet-500 hover:to-violet-400">
-            Get Started
-          </button>
-        </div>
+    <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-3 flex justify-between items-center bg-zinc-950/60 backdrop-blur-xl rounded-full mt-6 max-w-4xl mx-auto border border-violet-500/15 shadow-[0px_0px_20px_rgba(124,58,237,0.1)] font-['Inter'] antialiased">
+      <div className="text-xl font-bold tracking-tighter text-zinc-100">QuickDB</div>
+      <div className="flex items-center gap-4">
+        <button onClick={() => navigate("/auth")} className="bg-primary text-on-primary-fixed px-5 py-2 rounded-full font-semibold text-sm hover:opacity-90 transition-all scale-95 active:opacity-80">Start Building</button>
       </div>
     </nav>
   );

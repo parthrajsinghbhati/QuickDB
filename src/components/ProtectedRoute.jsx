@@ -1,10 +1,11 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
+import { isTokenValid } from "../utils/auth";
 
 const isAuthenticated = () => {
   try {
     const token = localStorage.getItem("token");
-    return Boolean(token);
+    return isTokenValid(token);
   } catch {
     return false;
   }

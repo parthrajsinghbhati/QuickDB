@@ -1,42 +1,85 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { isTokenValid, handleLogout } from "../utils/auth";
+
+// --- Subcomponents for clean DOM ---
+
+const BackgroundEffects = () => (
+    <>
+        <div 
+            className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay" 
+            style={{backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAu_P5uBBlccAbkmdychcabJTSBHRbTddDJegFgnp-FDYotNhJoMPYkS4U-iadkuf6Gx3129RovYXAj2IOkhw5xTCIu6YdT5VVXRC62h_Lj_3a2WQu3nqytyrowGMAXQ5PyihKRL41mS8ENCwI3LQWHPGfKoDh71cHcOZeKqkkHECX2-TJCcTuun3hz6qdAOMu9weum4Gqur3bS1eoUAEHx1KTF7otDQs67zM6GA423sSJwziIfMHCCyDIKVFCcqzMDHo4GbB7MMTI')"}}
+        />
+        <div className="absolute top-[10%] left-[5%] w-[40vw] h-[40vw] rounded-full bg-primary/5 blur-[120px] pointer-events-none -z-10" />
+        <div className="absolute bottom-[10%] right-[5%] w-[50vw] h-[50vw] rounded-full bg-secondary/5 blur-[150px] pointer-events-none -z-10" />
+    </>
+);
+
+const AuthInput = ({ label, type, name, value, onChange, placeholder, disabled, rightElement }) => (
+    <div className="space-y-2">
+        <div className="flex justify-between items-end px-1">
+            <label className="text-xs font-mono uppercase tracking-widest text-on-surface-variant ml-1">{label}</label>
+            {rightElement}
+        </div>
+        <div className="group relative">
+            <input 
+                type={type}
+                name={name}
+                value={value}
+                onChange={onChange}
+                required 
+                className="w-full bg-surface-container-highest/40 border-transparent rounded-xl py-4 px-5 text-on-surface font-mono placeholder:text-on-surface-variant/40 focus:ring-1 focus:ring-secondary-dim/50 focus:bg-surface-container-highest/60 transition-all outline-none focus:border-transparent" 
+                placeholder={placeholder}
+                disabled={disabled}
+            />
+        </div>
+    </div>
+);
+
+// --- Main Auth Component ---
 
 const Auth = () => {
     const navigate = useNavigate();
 
-    // state for login or register
     const [state, setState] = React.useState("login");
-
-    // loading and error states
     const [error, setError] = React.useState("");
     const [loading, setLoading] = React.useState(false);
-
-    // state for input value
     const [data, setData] = React.useState({
         name: "",
         email: "",
         password: "",
     });
 
-    // auto-redirect if already authenticated
     React.useEffect(() => {
-        try {
-            const token = localStorage.getItem('token');
-            if (token) {
+        const token = localStorage.getItem('token');
+        if (token) {
+            if (isTokenValid(token)) {
                 navigate('/dashboard', { replace: true });
+            } else {
+                handleLogout();
             }
-        } catch {
-            // ignore localStorage errors
         }
     }, [navigate]);
 
-    // handle change input value
     const onChangeHandler = (e) => {
         setData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
-    // handle submit form
+    const getErrorMessage = (error, currentState) => {
+        const status = error.response?.status;
+        const result = error.response?.data;
+        
+        if (status === 404 && currentState === 'login') return 'User not found. Please sign up first.';
+        if (status === 401 && currentState === 'login') return 'Invalid credentials. Please check your password.';
+        if (status === 400 && currentState === 'register') {
+            return result?.message === 'User already exists' 
+              ? 'User already exists. Please log in.' 
+              : (result.errors?.[0]?.msg || 'Please check the form and try again.');
+        }
+        return result?.message || result?.error || result?.errors?.[0]?.msg || 'An error occurred';
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
@@ -45,106 +88,122 @@ const Auth = () => {
             const endpoint = state === 'login' ? '/auth/login' : '/auth/register';
             const response = await api.post(endpoint, data);
             
-            // Store token in localStorage
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
             
-            // Navigate to dashboard
             navigate("/dashboard");
         } catch (error) {
             console.error('Authentication error:', error);
-            
-            let friendly = 'An error occurred';
-            const status = error.response?.status;
-            const result = error.response?.data;
-
-            if (status === 404 && state === 'login') {
-                friendly = 'User not found. Please sign up first.';
-            } else if (status === 401 && state === 'login') {
-                friendly = 'Invalid credentials. Please check your password.';
-            } else if (status === 400 && state === 'register') {
-                friendly = result?.message === 'User already exists' 
-                  ? 'User already exists. Please log in.' 
-                  : (result.errors?.[0]?.msg || 'Please check the form and try again.');
-            } else {
-                friendly = result?.message || result?.error || result?.errors?.[0]?.msg || friendly;
-            }
-            setError(friendly);
+            setError(getErrorMessage(error, state));
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="flex items-center justify-center min-h-[80vh]">
-        {loading && (
-            <div className="fixed top-0 left-0 w-full h-1 z-50">
-                <div className="h-full bg-indigo-500 animate-pulse" />
-            </div>
-        )}
-        <form
-            onSubmit={handleSubmit}
-            className="w-full sm:w-[350px] text-center border border-zinc-300/60 dark:border-zinc-700 rounded-2xl px-8 bg-white dark:bg-zinc-900"
-        >
-            <h1 className="text-zinc-900 dark:text-white text-3xl mt-10 font-medium">
-                {state === "login" ? "Login" : "Register"}
-            </h1>
-            <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-2 pb-6">
-                Please {state === "login" ? "sign in" : "sign up"} to continue
-            </p>
+        <div className="bg-background text-on-surface font-body selection:bg-primary/30 min-h-screen flex items-center justify-center overflow-hidden p-6 relative z-0">
+            <BackgroundEffects />
 
-            {state !== "login" && (
-                <div className="flex items-center w-full mt-4 bg-white dark:bg-zinc-800 border border-zinc-300/80 dark:border-zinc-700 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                    {/* User Icon */}
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-500 dark:text-zinc-400" viewBox="0 0 24 24" >
-                        <path d="M20 21a8 8 0 0 0-16 0" />
-                        <circle cx="12" cy="7" r="4" />
-                    </svg>
-                    <input type="text" placeholder="Name" className="bg-transparent text-zinc-600 dark:text-zinc-200 placeholder-zinc-500 dark:placeholder-zinc-400 outline-none text-sm w-full h-full" name="name" value={data.name} onChange={onChangeHandler} required />
+            <main className="w-full max-w-[480px] relative z-10">
+                {/* Branding Header */}
+                <div className="flex flex-col items-center mb-10">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center neon-bloom mb-4 p-[2px]">
+                        <div className="w-full h-full bg-surface-container-lowest rounded-[14px] flex items-center justify-center">
+                            <span className="material-symbols-outlined text-primary text-4xl">terminal</span>
+                        </div>
+                    </div>
+                    <h1 className="text-3xl font-black tracking-tighter text-on-surface">QUICKDB</h1>
+                    <p className="text-on-surface-variant font-mono text-sm mt-1 tracking-tight">SYSTEM_ACCESS_PROTOCOL_V4.0</p>
                 </div>
-            )}
 
-            <div className="flex items-center w-full mt-4 bg-white dark:bg-zinc-800 border border-zinc-300/80 dark:border-zinc-700 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                {/* Mail Icon */}
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-500 dark:text-zinc-400" viewBox="0 0 24 24" >
-                    <rect width="20" height="16" x="2" y="4" rx="2" />
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                </svg>
-                <input type="email" placeholder="Email id" className="bg-transparent text-zinc-600 dark:text-zinc-200 placeholder-zinc-500 dark:placeholder-zinc-400 outline-none text-sm w-full h-full" name="email" value={data.email} onChange={onChangeHandler} required />
-            </div>
+                {/* Card */}
+                <div className="glass-card rounded-3xl p-8 shadow-2xl relative overflow-hidden neon-bloom">
+                    {/* Decorative refraction */}
+                    <div className="absolute -top-24 -left-24 w-48 h-48 bg-primary/10 blur-[60px] rounded-full"></div>
 
-            <div className="flex items-center mt-4 w-full bg-white dark:bg-zinc-800 border border-zinc-300/80 dark:border-zinc-700 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                {/* Lock Icon */}
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-500 dark:text-zinc-400" viewBox="0 0 24 24" >
-                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                </svg>
-                <input type="password" placeholder="Password" className="bg-transparent text-zinc-600 dark:text-zinc-200 placeholder-zinc-500 dark:placeholder-zinc-400 outline-none text-sm w-full h-full" name="password" value={data.password} onChange={onChangeHandler} required />
-            </div>
+                    <div className="mb-8 text-center relative z-10">
+                        <h2 className="text-2xl font-bold tracking-tight text-on-surface mb-2 leading-tight">
+                            {state === "login" ? "Initiate Session" : "Join the QuickDB"}
+                        </h2>
+                        <p className="text-on-surface-variant text-sm font-medium">
+                            {state === "login" ? "Welcome back to your command center." : "Provision high-performance clusters in seconds."}
+                        </p>
+                    </div>
 
-            <div className="mt-5 text-left">
-                <a className="text-sm text-indigo-500 dark:text-indigo-400" href="#" >
-                    Forgot password?
-                </a>
-            </div>
+                    <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
+                        {state === "register" && (
+                            <AuthInput 
+                                label="Full Name"
+                                type="text"
+                                name="name"
+                                value={data.name}
+                                onChange={onChangeHandler}
+                                placeholder="John Doe"
+                                disabled={loading}
+                            />
+                        )}
 
-            <button type="submit" disabled={loading} className="mt-2 w-full h-11 rounded-full text-white bg-indigo-500 hover:opacity-90 transition-opacity disabled:opacity-60" >
-                {loading ? 'Please wait…' : (state === "login" ? "Login" : "Create Account")}
-            </button>
+                        <AuthInput 
+                            label="Terminal.Identity"
+                            type="email"
+                            name="email"
+                            value={data.email}
+                            onChange={onChangeHandler}
+                            placeholder="root@quickdb.io"
+                            disabled={loading}
+                        />
 
-            {error && (
-                <p className="text-sm text-red-600 dark:text-red-500 mt-3">{error}</p>
-            )}
+                        <AuthInput 
+                            label="Secure_Key"
+                            type="password"
+                            name="password"
+                            value={data.password}
+                            onChange={onChangeHandler}
+                            placeholder="••••••••"
+                            disabled={loading}
+                            rightElement={
+                                state === "login" && (
+                                    <a href="#" className="text-xs text-primary/70 hover:text-primary transition-colors">Forgot_Entry?</a>
+                                )
+                            }
+                        />
 
-            <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-3 mb-11">
-                {state === "login"
-                    ? "Don't have an account? "
-                    : "Already have an account? "}
-                <button type="button" className="text-indigo-500 dark:text-indigo-400" onClick={() => setState((prev) => prev === "login" ? "register" : "login")} >
-                    {state === "login" ? "Register" : "Login"}
-                </button>
-            </p>
-        </form>
+                        {error && (
+                            <div className="bg-error-container/20 border border-error/20 rounded-xl p-3 mt-2">
+                                <p className="text-sm text-error/90 font-mono text-center">{error}</p>
+                            </div>
+                        )}
+
+                        <button 
+                            type="submit" 
+                            disabled={loading} 
+                            className="w-full mt-4 py-4 px-6 bg-gradient-to-r from-primary to-secondary text-on-primary-fixed font-bold rounded-xl active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(186,158,255,0.25)] hover:shadow-[0_0_30px_rgba(186,158,255,0.4)] disabled:opacity-70 flex items-center justify-center gap-2"
+                        >
+                            {loading ? (
+                                <span className="animate-pulse">PROCESSING...</span>
+                            ) : (
+                                state === "login" ? "INITIATE_SESSION" : "CREATE_ACCOUNT"
+                            )}
+                        </button>
+                    </form>
+                    
+                    <div className="mt-8 pt-6 border-t border-outline-variant/10 text-center relative z-10">
+                        <p className="text-on-surface-variant text-sm">
+                            {state === "login" ? "New to the Observatory?" : "Already have an account?"} 
+                            <button 
+                                type="button" 
+                                onClick={() => {
+                                    setState(state === "login" ? "register" : "login");
+                                    setError("");
+                                }} 
+                                className="text-primary font-semibold hover:underline underline-offset-4 ml-2 transition-colors"
+                            >
+                                {state === "login" ? "Create Account" : "Log In"}
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </main>
         </div>
     );
 };
