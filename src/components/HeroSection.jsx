@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from 'react-router';
 
 const HeroSection = () => {
+    const navigate = useNavigate();
     return (
         <section className="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-20 px-6 overflow-hidden">
             {/* Ambient Glow Background */}

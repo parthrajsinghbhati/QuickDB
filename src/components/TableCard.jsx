@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Table, Trash2 } from 'lucide-react'
+import { Table, Trash2, Database, AlignLeft, Hash, Calendar, Layers } from 'lucide-react'
 import useTables from '../hooks/useTables'
 
 const TableCard = ({ table }) => {
@@ -27,53 +27,62 @@ const TableCard = ({ table }) => {
   return (
     <div 
       onClick={handleNavigate}
-      className="bg-slate-900/40 hover:bg-slate-800/60 p-6 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all duration-300 group cursor-pointer"
+      className="group glass-card rounded-[2rem] p-6 border border-outline-variant/10 hover:border-tertiary/40 hover:shadow-[0_8px_30px_rgb(176,174,255,0.1)] hover:-translate-y-1 transition-all duration-500 cursor-pointer relative overflow-hidden flex flex-col"
     >
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
-            <Table className="text-blue-400" size={24} />
+      <div className="absolute top-[-50px] right-[-50px] w-32 h-32 bg-tertiary/10 blur-[40px] group-hover:bg-tertiary/20 transition-colors pointer-events-none rounded-full"></div>
+
+      <div className="flex items-start justify-between mb-6 relative z-10">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-tertiary/10 rounded-xl border border-tertiary/20 group-hover:scale-110 group-hover:bg-tertiary/20 transition-all duration-300">
+            <Table className="text-tertiary shadow-[0_0_10px_rgba(176,174,255,0.4)]" size={24} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-100">{table.name}</h3>
-            <p className="text-xs text-slate-500">{new Date(table.updatedAt).toLocaleDateString()}</p>
+            <h3 className="text-xl font-bold text-on-surface tracking-tight group-hover:text-tertiary transition-colors">{table.name}</h3>
+            <p className="text-xs font-mono text-on-surface-variant mt-1.5 flex items-center gap-1 opacity-80">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Active Model
+            </p>
           </div>
         </div>
         <button 
           onClick={handleDelete}
-          className="text-slate-500 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition-colors"
+          className="text-on-surface-variant hover:text-error hover:bg-error-container/20 p-2.5 rounded-xl border border-transparent hover:border-error/30 transition-colors"
+          title="Drop Table"
         >
-          <Trash2 size={20} />
+          <Trash2 size={18} />
         </button>
       </div>
 
-      <div className="space-y-2 mb-6">
+      <div className="space-y-3 mb-6 relative z-10 flex-1">
+        <div className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60 mb-2">Schema Preview</div>
         {(() => {
           const columns = Array.isArray(table.columns) 
             ? table.columns 
             : Object.entries(table.columns || {}).map(([name, details]) => ({ name, ...details }));
           
           return (
-            <>
+            <div className="bg-surface-container/50 border border-outline-variant/5 rounded-xl p-3">
               {columns.slice(0, 3).map((col, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-sm text-slate-400">
-                  {/* We don't have icons for types yet, just use a generic one or text */}
-                  <span>{col.name}</span>
-                  <span className="text-xs text-slate-600 ml-auto">{col.type}</span>
+                <div key={idx} className="flex items-center gap-3 text-sm text-on-surface py-1.5 border-b border-outline-variant/10 last:border-0 last:pb-0">
+                  <Layers className="text-on-surface-variant opacity-50" size={12}/>
+                  <span className="font-mono">{col.name}</span>
+                  <span className="text-[10px] font-bold text-tertiary ml-auto uppercase tracking-widest bg-tertiary/10 px-2 py-0.5 rounded-md border border-tertiary/20">{col.type}</span>
                 </div>
               ))}
               {columns.length > 3 && (
-                <div className="text-xs text-slate-600 pl-6">
-                  + {columns.length - 3} more columns
+                <div className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest text-center mt-3 border-t border-outline-variant/10 pt-2 opacity-70">
+                  + {columns.length - 3} additional columns
                 </div>
               )}
-            </>
+            </div>
           );
         })()}
       </div>
 
-      <div className="flex items-center justify-between pt-4 border-t border-slate-800/50">
-        <span className="text-xs text-slate-500">Created {new Date(table.createdAt).toLocaleDateString()}</span>
+      <div className="flex items-center justify-between pt-5 border-t border-outline-variant/10 relative z-10">
+        <div className="flex items-center gap-2 text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">
+           <Calendar size={12} />
+           <span>{new Date(table.createdAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric'})}</span>
+        </div>
         <button 
           onClick={(e) => {
             e.stopPropagation();
@@ -81,9 +90,9 @@ const TableCard = ({ table }) => {
                navigate(`/dashboard/database/${table.databaseId}/table/${table.id}`);
             }
           }}
-          className="text-sm text-violet-400 hover:text-violet-300 font-medium transition-colors"
+          className="text-sm font-bold text-tertiary hover:text-white transition-colors group-hover:translate-x-1 duration-300"
         >
-          View Data
+          View Data ➔
         </button>
       </div>
     </div>

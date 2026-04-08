@@ -189,7 +189,7 @@ const Auth = () => {
                     
                     <div className="mt-8 pt-6 border-t border-outline-variant/10 text-center relative z-10">
                         <p className="text-on-surface-variant text-sm">
-                            {state === "login" ? "New to the Observatory?" : "Already have an account?"} 
+                            {state === "login" ? "New to QuickDB?" : "Already have an account?"} 
                             <button 
                                 type="button" 
                                 onClick={() => {

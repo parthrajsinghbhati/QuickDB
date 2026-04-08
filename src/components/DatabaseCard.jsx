@@ -17,45 +17,55 @@ const DatabaseCard = ({ db }) => {
   };
 
   return (
-    <div className="group bg-slate-900/40 hover:bg-slate-800/60 p-6 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all duration-300">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-violet-500/10 rounded-lg group-hover:bg-violet-500/20 transition-colors">
-            <Database className="text-violet-400" size={24} />
+    <div className="group glass-card rounded-[2rem] p-6 border border-outline-variant/10 hover:border-primary/40 hover:shadow-[0_8px_30px_rgb(186,158,255,0.1)] hover:-translate-y-1 transition-all duration-500 relative overflow-hidden flex flex-col">
+      <div className="absolute top-[-50px] right-[-50px] w-32 h-32 bg-primary/10 blur-[40px] group-hover:bg-primary/20 transition-colors pointer-events-none rounded-full"></div>
+      
+      <div className="flex items-start justify-between mb-5 relative z-10">
+        <div className="flex flex-col gap-3">
+          <div className="p-3 w-12 h-12 flex items-center justify-center bg-primary-container/20 rounded-xl border border-primary/20 group-hover:scale-110 transition-transform duration-300">
+            <Database className="text-primary" size={24} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-100">{db.name}</h3>
+            <h3 className="text-xl font-bold text-on-surface tracking-tight group-hover:text-primary transition-colors">{db.name}</h3>
           </div>
         </div>
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${
           (db.status || 'active') === 'active' 
-            ? 'bg-violet-500/10 text-violet-400 border border-violet-500/20' 
-            : 'bg-slate-700/30 text-slate-400 border border-slate-700/50'
+            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]' 
+            : 'bg-surface-container-high text-on-surface-variant border border-outline-variant/20'
         }`}>
           {db.status || 'Active'}
         </span>
       </div>
       
-      <p className="text-slate-400 text-sm mb-6 h-10 line-clamp-2">
-        {db.description || 'No description provided'}
+      <p className="text-on-surface-variant text-sm mb-6 h-10 line-clamp-2 leading-relaxed relative z-10">
+        {db.description || 'No description provided for this database container.'}
       </p>
       
-      <div className="flex items-center justify-between text-xs text-slate-500 mb-6">
-        <span>{db._count?.tables || db.tables || 0} tables</span>
-        <span>Updated {db.updatedAt ? new Date(db.updatedAt).toLocaleDateString() : (db.lastUpdated || 'Recently')}</span>
+      <div className="flex items-center gap-4 text-xs font-mono font-medium text-on-surface-variant/70 mb-6 bg-surface-container p-3 rounded-xl border border-outline-variant/5 relative z-10">
+        <div className="flex flex-col">
+          <span className="uppercase text-[10px] tracking-widest opacity-70 mb-0.5">Tables</span>
+          <span className="text-on-surface">{db._count?.tables || db.tables || 0}</span>
+        </div>
+        <div className="w-px h-6 bg-outline-variant/20"></div>
+        <div className="flex flex-col">
+          <span className="uppercase text-[10px] tracking-widest opacity-70 mb-0.5">Updated</span>
+          <span className="text-on-surface">{db.updatedAt ? new Date(db.updatedAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year:'2-digit'}) : (db.lastUpdated || 'Recently')}</span>
+        </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 mt-auto relative z-10">
         <button 
           onClick={() => window.location.href = `/dashboard/database/${db.id}`}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-lg transition-colors text-sm font-medium cursor-pointer"
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-primary/10 hover:bg-primary/20 hover:text-white text-primary border border-primary/20 rounded-xl transition-all text-sm font-bold cursor-pointer"
         >
-          <ExternalLink size={16} />
-          Open
+          <ExternalLink size={18} />
+          Open Data
         </button>
         <button 
           onClick={handleDelete}
-          className="p-2.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
+          className="p-3 text-on-surface-variant hover:text-error hover:bg-error-container/20 border border-outline-variant/10 hover:border-error/30 rounded-xl transition-colors cursor-pointer"
+          title="Delete Database"
         >
           <Trash2 size={18} />
         </button>

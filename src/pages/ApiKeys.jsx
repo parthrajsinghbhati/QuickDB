@@ -5,7 +5,7 @@ import Sidebar from '../components/Sidebar';
 import api from '../services/api';
 
 const ApiKeys = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [apiKeys, setApiKeys] = useState([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
@@ -65,100 +65,115 @@ const ApiKeys = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans">
+    <div className="min-h-screen bg-background font-body text-on-background transition-colors">
       <DashboardNavbar toggleSidebar={toggleSidebar} />
       <Sidebar isOpen={sidebarOpen} />
       
-      <div className={`transition-all duration-300 ${sidebarOpen ? 'ml-48' : 'ml-0'}`}>
-        <div className="container mx-auto px-6 py-8 max-w-4xl">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">API Keys</h1>
-            <p className="text-slate-400">Manage API keys for accessing your data programmatically</p>
+      <div className={`transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-0'}`}>
+        <div className="max-w-4xl mx-auto px-8 py-10">
+          
+          <div className="mb-10">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-on-surface tracking-tight mb-2">API Keys</h1>
+            <p className="text-on-surface-variant text-lg">Secure cryptographic access points for your environment.</p>
           </div>
 
           {/* Create Key Section */}
-          <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 mb-8">
-            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Plus className="w-5 h-5 text-violet-500" />
-              Create New API Key
+          <div className="glass-card rounded-[2rem] border border-outline-variant/20 p-8 mb-10 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[80px] -mr-32 -mt-32 pointer-events-none"></div>
+            <h2 className="text-2xl font-bold text-on-surface mb-6 flex items-center gap-3 relative z-10">
+              <div className="p-2.5 bg-primary-container/20 rounded-xl border border-primary/20">
+                 <Plus className="w-5 h-5 text-primary" strokeWidth={3} />
+              </div>
+              Provision Access Token
             </h2>
-            <div className="flex gap-4">
+            <div className="flex flex-col md:flex-row gap-4 relative z-10">
               <input
                 type="text"
                 value={newKeyName}
                 onChange={(e) => setNewKeyName(e.target.value)}
-                placeholder="Key Name (e.g., Mobile App, Website)"
-                className="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent transition-all"
+                placeholder="Ex: Production Vercel App"
+                className="flex-1 bg-surface-container border border-outline-variant/20 rounded-xl px-5 py-4 text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium shadow-inner"
               />
               <button
                 onClick={handleCreateKey}
                 disabled={creating || !newKeyName.trim()}
-                className="bg-violet-600 hover:bg-violet-500 disabled:bg-violet-600/50 disabled:cursor-not-allowed text-white font-medium px-6 py-2 rounded-lg transition-colors flex items-center gap-2"
+                className="cta-gradient neon-bloom disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold px-8 py-4 rounded-xl transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
               >
-                {creating ? <Loader className="animate-spin" size={18} /> : <Plus size={18} />}
-                Generate Key
+                {creating ? <Loader className="animate-spin" size={20} /> : <Plus size={20} strokeWidth={3} />}
+                Generate Token
               </button>
             </div>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 flex items-center gap-2">
-              <AlertCircle size={20} />
+            <div className="mb-8 p-5 bg-error-container/20 border border-error/30 rounded-2xl text-error font-medium flex items-center gap-3">
+              <AlertCircle size={22} className="flex-shrink-0" />
               {error}
             </div>
           )}
 
           {/* Keys List */}
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Key className="w-5 h-5 text-violet-500" />
-              Active API Keys
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-on-surface mb-6 flex items-center gap-3">
+              <div className="p-2.5 bg-secondary-container/20 rounded-xl border border-secondary/20">
+                <Key className="w-5 h-5 text-secondary" />
+              </div>
+              Active Authentication Tokens
             </h2>
             
             {loading ? (
-              <div className="text-center py-8 text-slate-500">Loading keys...</div>
+              <div className="flex justify-center items-center py-20">
+                <div className="relative">
+                  <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
+                  <div className="border-4 border-primary border-t-transparent rounded-full w-12 h-12 animate-spin"></div>
+                </div>
+              </div>
             ) : apiKeys.length === 0 ? (
-              <div className="text-center py-8 bg-slate-900/30 rounded-xl border border-slate-800 border-dashed text-slate-500">
-                No API keys found. Create one to get started.
+              <div className="text-center py-20 border-2 border-dashed border-outline-variant/10 rounded-3xl bg-surface-container-low/50">
+                <p className="text-on-surface-variant font-medium text-lg mb-2">No active tokens.</p>
+                <p className="text-on-surface-variant/60">Generate an API key to securely connect applications.</p>
               </div>
             ) : (
-              apiKeys.map((key) => (
-                <div key={key.id} className="bg-slate-900/50 p-6 rounded-xl border border-slate-800 flex items-center justify-between group hover:border-slate-700 transition-colors">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-semibold text-white">{key.name}</h3>
-                      <span className="text-xs text-slate-500 bg-slate-800 px-2 py-1 rounded">
-                        Created: {new Date(key.createdAt).toLocaleDateString()}
-                      </span>
+              <div className="space-y-4">
+                {apiKeys.map((key) => (
+                  <div key={key.id} className="glass-card bg-surface-container-low/50 p-6 rounded-[1.5rem] border border-outline-variant/10 flex items-center justify-between group hover:border-primary/30 transition-all hover:shadow-[0_8px_30px_rgb(186,158,255,0.05)]">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-3">
+                        <h3 className="font-bold text-on-surface text-lg">{key.name}</h3>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant bg-surface-container-high px-2 py-1 rounded border border-outline-variant/5">
+                          Created {new Date(key.createdAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'})}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <code className="bg-surface-container px-4 py-2 rounded-lg text-primary font-mono text-sm border border-outline-variant/10 shadow-inner flex-1 min-w-0 break-all select-all">
+                          {key.key}
+                        </code>
+                        <button
+                          onClick={() => handleCopy(key.key, key.id)}
+                          className="p-2.5 bg-surface-container-high hover:bg-primary/20 rounded-lg transition-colors text-on-surface-variant hover:text-primary border border-outline-variant/10 cursor-pointer"
+                          title="Copy Key"
+                        >
+                          {copied === key.id ? <Check size={18} className="text-emerald-400" /> : <Copy size={18} />}
+                        </button>
+                      </div>
+                      {key.lastUsedAt && (
+                        <p className="text-xs font-mono font-medium text-on-surface-variant/70 mt-3 flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/80"></span>
+                          Last executed: {new Date(key.lastUsedAt).toLocaleString()}
+                        </p>
+                      )}
                     </div>
-                    <div className="flex items-center gap-3">
-                      <code className="bg-slate-950 px-3 py-1.5 rounded text-violet-400 font-mono text-sm border border-slate-800">
-                        {key.key}
-                      </code>
-                      <button
-                        onClick={() => handleCopy(key.key, key.id)}
-                        className="p-1.5 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
-                        title="Copy Key"
-                      >
-                        {copied === key.id ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
-                      </button>
-                    </div>
-                    {key.lastUsedAt && (
-                      <p className="text-xs text-slate-500 mt-2">
-                        Last used: {new Date(key.lastUsedAt).toLocaleString()}
-                      </p>
-                    )}
+                    <button
+                      onClick={() => handleRevokeKey(key.id)}
+                      className="p-3 bg-surface-container hover:bg-error-container/20 text-on-surface-variant hover:text-error rounded-xl transition-colors ml-6 border border-outline-variant/5 hover:border-error/20 cursor-pointer"
+                      title="Revoke Configuration"
+                    >
+                      <Trash2 size={20} />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => handleRevokeKey(key.id)}
-                    className="p-2 hover:bg-red-500/10 text-slate-500 hover:text-red-500 rounded-lg transition-colors ml-4"
-                    title="Revoke Key"
-                  >
-                    <Trash2 size={20} />
-                  </button>
-                </div>
-              ))
+                ))}
+              </div>
             )}
           </div>
         </div>
